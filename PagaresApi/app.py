@@ -168,6 +168,7 @@ def crear_pagare_4(id_pagare):
     fecha_hoy = datetime.today()
     fecha_expr = datetime.now() + timedelta(days=5*365)
     pagare.etapa = 4
+    pagare.pendiente = True
     pagare.fechaCreacion = fecha_hoy
     pagare.fechaExpiracion = fecha_expr
     hash_transaccion = bca.crear_pagare(pagare)
@@ -188,6 +189,34 @@ def get_pagare_blockchain(id_pagare):
     return bca.get_pure_pagare(id_pagare)
 
 
+# Route /pagares/deudor/<idDeudor>
+# GET
+# Trae la lista de pagares del deudor id_deudor
+@app.route('/pagares/deudor/<id_deudor>', methods=['GET'])
+def getPagaresDeudor(id_deudor):
+    pagares = db.pagares.find({'idDeudor':int(id_deudor) })
+    pagaresList = list(pagares)
+    returnList = []
+    for p in pagaresList:
+        pagare = Pagare()
+        pagare.pagareFromDoc(p)
+        returnList.append(vars(pagare))
+    return jsonify(returnList)
+
+
+# Route /pagares/acreedor/<id_acreedor>
+# GET
+# Trae la lista de pagares del acreedor id_acreedor
+@app.route('/pagares/acreedor/<id_acreedor>', methods=['GET'])
+def getPagaresAcreedor(id_acreedor):
+    pagares = db.pagares.find({'idAcreedor':int(id_acreedor)})
+    pagaresList = list(pagares)
+    returnList = []
+    for p in pagaresList:
+        pagare = Pagare()
+        pagare.pagareFromDoc(p)
+        returnList.append(vars(pagare))
+    return jsonify(returnList)
 
 
 

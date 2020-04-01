@@ -1,6 +1,7 @@
 // pragma solidity ^0.5.16;
 // pragma solidity ^0.6.4;
-pragma solidity >= 0.5.16 < 0.7.0;
+pragma solidity >=0.5.16 <0.7.0;
+
 
 contract PagareTracker {
     string id = "aaa";
@@ -179,5 +180,9 @@ contract PagareTracker {
         }
 
         return false;
+    }
+
+    function marcarPagado(string memory _id) public {
+        pagareStore[_id].pendiente = false;
     }
 }

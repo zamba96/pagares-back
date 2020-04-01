@@ -6,7 +6,9 @@ import binascii
 class BlockChainAccess:
     infura_url = 'https://ropsten.infura.io/v3/eb2fd22ee53744e7aa5c7f43b00536ba'
     ganache_url = "http://127.0.0.1:7545"
-    account_1 = '0x0Faa4E21C6E331a1c81f6c531a6DcaBD187642a1'  # Fill me in
+    account_1 = '0xCE7f6e712F227bAc123fD5939047Db2963E10d7F'  # Fill me in
+
+    pk = '37196d25e9c8ce0ab7e3ebfed765aa58cf5ff77f3499e790b60f342dcd0212ab'
     # account_2 = '0xdfeBbE784E15999C807e00125d7f10dc96A4Bc0b' # Fill me in
     # pk_1 = '3c554492f98ca1c8974a4f74db7fc78bae58ad8588a45cab3d330ed2aa7ea25c' # PK 1
 
@@ -14,8 +16,8 @@ class BlockChainAccess:
     web3 = None
     contract = None
     def __init__(self):
-        self.web3 = Web3(Web3.HTTPProvider(self.ganache_url))
-        # global web3 = Web3(Web3.HTTPProvider(infura_url))
+        # self.web3 = Web3(Web3.HTTPProvider(self.ganache_url))
+        self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
         if(not self.web3.isConnected()):
             print("-------------------Blockchain Access--------------------------")
             print('Connection to {}: Failed\nExiting...'.format(self.web3.provider))
@@ -28,7 +30,7 @@ class BlockChainAccess:
                 abi = json.load(json_file)['abi']
 
         contractAddress = self.web3.toChecksumAddress(
-        '0x25871EE82144843454707FC9A2f5335c1b5E239a')
+        '0x68a9e87DDccB21B7222051c89B96ad4770eA6644')
 
         self.contract = self.web3.eth.contract(address=contractAddress, abi=abi)
 
@@ -71,9 +73,17 @@ class BlockChainAccess:
         info = info + pagare.firma
         info_acreedor = str(pagare.idAcreedor) + ',' + pagare.nombreAcreedor
         info_deudor = str(pagare.idDeudor) + ',' + pagare.nombreDeudor 
-        tx_hash = self.contract.functions.createPagare(pagare._id, str(pagare.valor), info_deudor, info_acreedor, info).transact({'from': self.account_1})
+        nonce = self.web3.eth.getTransactionCount(self.account_1) 
+        tx = self.contract.functions.createPagare(pagare._id, str(pagare.valor), info_deudor, info_acreedor, info).buildTransaction({
+            'nonce':nonce
+        })
+        signed_tx = self.web3.eth.account.sign_transaction(tx, private_key=self.pk)
+        # print(signed_tx.hash)
+        tx_hash = self.web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        # tx_hash = self.contract.functions.createPagare(pagare._id, str(pagare.valor), info_deudor, info_acreedor, info).transact({'from': self.account_1})
         tx_hash_string = "0x" + str(binascii.hexlify(tx_hash)).split("'")[1]
         return tx_hash_string
+        # return "nope"
 
 
     def get_pure_pagare(self, id_pagare):
@@ -83,7 +93,9 @@ class BlockChainAccess:
             'valor':response[1],
             'info_deudor':response[2],
             'info_acreedor':response[3],
-            'info_extra':response[4]
+            'info_extra':response[4],
+            'ultimo_endoso':response[5],
+            'pendiente':response[6]
         }
         return return_dict
 
