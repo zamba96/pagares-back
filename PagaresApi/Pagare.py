@@ -25,6 +25,7 @@ class Pagare:
         self.terminos = "null"
         self.codigoRetiro = "null"
         self.confirmacionRetiro = "null"
+        self.hash_transaccion = "null"
 
 
     def pagareFromRequest(self, p_request):
@@ -60,6 +61,7 @@ class Pagare:
         self.terminos = doc['terminos']
         self.codigoRetiro = doc['codigoRetiro']
         self.confirmacionRetiro = doc['confirmacionRetiro']
+        self.hash_transaccion = doc['hash_transaccion']
 
     def setId(self, id):
         self._id = id

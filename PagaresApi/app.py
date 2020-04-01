@@ -4,6 +4,7 @@ from flask import jsonify
 from flask import request
 from bson.objectid import ObjectId
 from datetime import datetime
+from datetime import timedelta
 import hashlib
 from blockChainAccess import BlockChainAccess
 from Pagare import Pagare
@@ -73,7 +74,7 @@ def getPagareById(id_pagare):
 
 
 # route /pagares/etapa1/
-# POST 
+# PUT 
 # Crea un nuevo pagare en etapa 1
 @app.route('/pagares/etapa1', methods=['POST'])
 def crear_pagare_1():
@@ -92,10 +93,10 @@ def crear_pagare_1():
 
 
 
-# route /pagares/etapa2/<id_pagare>
-# POST 
+# route /pagares/<id_pagare>/etapa2
+# PUT 
 # Crea un nuevo pagare en etapa 2
-@app.route('/pagares/etapa2/<id_pagare>', methods=['POST'])
+@app.route('/pagares/<id_pagare>/etapa2', methods=['PUT'])
 def crear_pagare_2(id_pagare):
     
     try:
@@ -119,10 +120,10 @@ def crear_pagare_2(id_pagare):
     return vars(pagare)
 
 
-# route /pagares/etapa3/<id_pagare>
-# POST 
+# route /pagares/<id_pagare>/etapa3
+# PUT
 # Crea un nuevo pagare en etapa 3
-@app.route('/pagares/etapa3/<id_pagare>', methods=['POST'])
+@app.route('/pagares/<id_pagare>/etapa3', methods=['PUT'])
 def crear_pagare_3(id_pagare):
     
     try:
@@ -148,8 +149,43 @@ def crear_pagare_3(id_pagare):
     return vars(pagare)
 
 
+# route /pagares/<id_pagare>/etapa4
+# PUT
+# Crea un nuevo pagare en etapa 4
+@app.route('/pagares/<id_pagare>/etapa4', methods=['PUT'])
+def crear_pagare_4(id_pagare):
+    
+    try:
+        doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
+    except:
+        return "El id es invalido", 400 
+    if doc == None:
+        return "Pagare no encontrado", 404
+
+    pagare = Pagare()
+    pagare.pagareFromDoc(doc)
+    pagare.firma = request.json['firma']
+    fecha_hoy = datetime.today()
+    fecha_expr = datetime.now() + timedelta(days=5*365)
+    pagare.etapa = 4
+    pagare.fechaCreacion = fecha_hoy
+    pagare.fechaExpiracion = fecha_expr
+    hash_transaccion = bca.crear_pagare(pagare)
+    pagare.hash_transaccion = hash_transaccion
+    updates = getUpdateStatement(pagare)
+
+    db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': updates})
+    doc = db.pagares.find_one({'_id':ObjectId(id_pagare)})
+    pagare.pagareFromDoc(doc)
+    return vars(pagare)
 
 
+# Route /pagares/<id_pagare>/blockchain
+# GET
+# Retorna la informacion plana que esta en el blockchain sobre el pagare
+@app.route('/pagares/<id_pagare>/blockchain', methods=['GET'])
+def get_pagare_blockchain(id_pagare):
+    return bca.get_pure_pagare(id_pagare)
 
 
 
@@ -171,7 +207,10 @@ def getUpdateStatement(pagare: Pagare):
         'ultimoEndoso':pagare.ultimoEndoso,
         'pendiente':pagare.pendiente,
         'etapa':pagare.etapa,
-        'terminos':pagare.terminos
+        'terminos':pagare.terminos,
+        'codigoRetiro':pagare.codigoRetiro,
+        'confirmacionRetiro':pagare.confirmacionRetiro,
+        'hash_transaccion':pagare.hash_transaccion
     }
 # --------Helper Methods------------
 

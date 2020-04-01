@@ -1,5 +1,6 @@
-pragma solidity ^0.5.16;
+// pragma solidity ^0.5.16;
 // pragma solidity ^0.6.4;
+pragma solidity >= 0.5.16 < 0.7.0;
 
 contract PagareTracker {
     string id = "aaa";
