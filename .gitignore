@@ -9,7 +9,7 @@ node_modules
 coverage
 
 # production
-build
+# build
 build_webpack
 
 # misc
@@ -59,7 +59,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+# build/
 develop-eggs/
 dist/
 downloads/
