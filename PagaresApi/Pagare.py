@@ -5,6 +5,7 @@ import hashlib
 
 dateFormatStr = '%d-%m-%Y'
 
+
 class Pagare:
 
     def __init__(self):
@@ -26,7 +27,8 @@ class Pagare:
         self.codigoRetiro = "null"
         self.confirmacionRetiro = "null"
         self.hash_transaccion = "null"
-
+        self.deudorAcepta = False
+        self.acreedorAcepta = False
 
     def pagareFromRequest(self, p_request):
         self.valor = p_request.json['valor']
@@ -34,13 +36,15 @@ class Pagare:
         self.idDeudor = p_request.json['idDeudor']
         self.nombreAcreedor = p_request.json['nombreAcreedor']
         self.idAcreedor = p_request.json['idAcreedor']
-        self.fechaCreacion = datetime.strptime(p_request.json['fechaCreacion'], dateFormatStr)
+        self.fechaCreacion = datetime.strptime(
+            p_request.json['fechaCreacion'], dateFormatStr)
         self.lugarCreacion = p_request.json['lugarCreacion']
-        self.fechaVencimiento = datetime.strptime(p_request.json['fechaVencimiento'], dateFormatStr)
-        self.fechaExpiracion = datetime.strptime(p_request.json['fechaExpiracion'], dateFormatStr)
+        self.fechaVencimiento = datetime.strptime(
+            p_request.json['fechaVencimiento'], dateFormatStr)
+        self.fechaExpiracion = datetime.strptime(
+            p_request.json['fechaExpiracion'], dateFormatStr)
         self.lugarCumplimiento = p_request.json['lugarCumplimiento']
         self.firma = "null"
-
 
     def pagareFromDoc(self, doc):
         self.valor = doc['valor']
@@ -67,7 +71,8 @@ class Pagare:
         self._id = id
 
     def firmar(self):
-        string = self._id + str(self.valor) + self.nombreDeudor + str(self.idDeudor) + self.nombreAcreedor + str(self.idAcreedor)
+        string = self._id + str(self.valor) + self.nombreDeudor + \
+            str(self.idDeudor) + self.nombreAcreedor + str(self.idAcreedor)
         hash_object = hashlib.sha256((string.encode()))
         hex_dig = hash_object.hexdigest()
         print(hex_dig)
@@ -79,7 +84,7 @@ class PagareBlockChain:
 
     def __init__(self, pagare_string):
         self._id = pagare_string[0]
-        self.valor  = pagare_string[1]
+        self.valor = pagare_string[1]
         self.id_deudor = pagare_string[2]
         self.id_acreedor = pagare_string[3]
         self.info = pagare_string[4]

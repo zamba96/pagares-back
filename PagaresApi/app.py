@@ -110,6 +110,8 @@ def crear_pagare_2(id_pagare):
     pagare.pagareFromDoc(doc)
     pagare.valor = request.json['valor']
     pagare.terminos = request.json['terminos']
+    pagare.acreedorAcepta = request.json['acreedorAcepta']
+    pagare.deudorAcepta = request.json['deudorAcepta']
     pagare.etapa = 2
 
     updates = getUpdateStatement(pagare)
@@ -119,6 +121,31 @@ def crear_pagare_2(id_pagare):
     pagare.pagareFromDoc(doc)
     return vars(pagare)
 
+
+# Route /pagares/<id_pagare>/etapa2/aceptar
+# PUT
+# Acepta el pagare
+@app.route('/pagares/<id_pagare>/etapa2/aceptar')
+def aceptar_pagare(id_pagare):
+    try:
+        doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
+    except:
+        return "El id es invalido", 400 
+    if doc == None:
+        return "Pagare no encontrado", 404
+
+    pagare = Pagare()
+    pagare.pagareFromDoc(doc)
+    pagare.acreedorAcepta = request.json['acreedorAcepta']
+    pagare.deudorAcepta = request.json['deudorAcepta']
+    pagare.etapa = 2
+
+    updates = getUpdateStatement(pagare)
+
+    db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': updates})
+    doc = db.pagares.find_one({'_id':ObjectId(id_pagare)})
+    pagare.pagareFromDoc(doc)
+    return vars(pagare)
 
 # route /pagares/<id_pagare>/etapa3
 # PUT
@@ -239,7 +266,10 @@ def getUpdateStatement(pagare: Pagare):
         'terminos':pagare.terminos,
         'codigoRetiro':pagare.codigoRetiro,
         'confirmacionRetiro':pagare.confirmacionRetiro,
-        'hash_transaccion':pagare.hash_transaccion
+        'hash_transaccion':pagare.hash_transaccion,
+        'deudorAcepta':pagare.deudorAcepta,
+        'acreedorAcepta':pagare.acreedorAcepta
+
     }
 # --------Helper Methods------------
 
