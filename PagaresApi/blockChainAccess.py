@@ -8,11 +8,11 @@ from Endoso import Endoso
 class BlockChainAccess:
     infura_url = 'https://ropsten.infura.io/v3/eb2fd22ee53744e7aa5c7f43b00536ba'
     ganache_url = "http://127.0.0.1:7545"
-    # account_1 = '0xCE7f6e712F227bAc123fD5939047Db2963E10d7F'  # Ropsten
-    account_1 = '0xE5cfc1B30018147c83E599d5D6Aa79b9fc26CF4a'  # Ganache
+    account_1 = '0xCE7f6e712F227bAc123fD5939047Db2963E10d7F'  # Ropsten
+    # account_1 = '0xE5cfc1B30018147c83E599d5D6Aa79b9fc26CF4a'  # Ganache
 
-    # pk = '37196d25e9c8ce0ab7e3ebfed765aa58cf5ff77f3499e790b60f342dcd0212ab' # Ropsten
-    pk = '96f6e38c9334fab49ce3a08b8b2f74feb83259bbdd70c294698b104d516414ef'  # Ganache
+    pk = '37196d25e9c8ce0ab7e3ebfed765aa58cf5ff77f3499e790b60f342dcd0212ab' # Ropsten
+    # pk = '96f6e38c9334fab49ce3a08b8b2f74feb83259bbdd70c294698b104d516414ef'  # Ganache
     # account_2 = '0xdfeBbE784E15999C807e00125d7f10dc96A4Bc0b' # Fill me in
     # pk_1 = '3c554492f98ca1c8974a4f74db7fc78bae58ad8588a45cab3d330ed2aa7ea25c' # PK 1
 
@@ -24,8 +24,8 @@ class BlockChainAccess:
     contract = None
 
     def __init__(self):
-        self.web3 = Web3(Web3.HTTPProvider(self.ganache_url))
-        # self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
+        # self.web3 = Web3(Web3.HTTPProvider(self.ganache_url))
+        self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
         if(not self.web3.isConnected()):
             print("-------------------Blockchain Access--------------------------")
             print('Connection to {}: Failed\nExiting...'.format(self.web3.provider))
@@ -39,7 +39,7 @@ class BlockChainAccess:
                 abi = json.load(json_file)['abi']
 
         contractAddress = self.web3.toChecksumAddress(
-            '0xF800c7Fd253471d06bF8689Deb52d2058171b55C')
+            '0x9D7F19128E83DcBa77271FEE9d72BD70C9fa2048')
 
         self.contract = self.web3.eth.contract(
             address=contractAddress, abi=abi)

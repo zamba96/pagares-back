@@ -11481,11 +11481,48 @@
           ],
           "name": "RejectEndoso",
           "type": "event"
+        },
+        "0x880fd471c916a525c0f5425a91bc81ae08198a0e3352682e7402555d4f22e34a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "from",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "to",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "_id",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "firma",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "id_endoso",
+              "type": "string"
+            }
+          ],
+          "name": "AcceptEndoso",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0x68a9e87DDccB21B7222051c89B96ad4770eA6644",
-      "transactionHash": "0x6d7366d9004b2c421060bbd1c7aaaa5151753478289b5c61475214c06c9e038c"
+      "address": "0x9D7F19128E83DcBa77271FEE9d72BD70C9fa2048",
+      "transactionHash": "0xeb124b287310d7de0ce4f91a12e2aa17e65ced75f74d620b7a5257a2dbe71e0c"
     },
     "5777": {
       "events": {
@@ -11896,7 +11933,7 @@
     }
   },
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-04-15T16:12:08.790Z",
+  "updatedAt": "2020-04-15T17:39:05.156Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

@@ -244,6 +244,15 @@ def getPagaresAcreedor(id_acreedor):
     for p in pagaresList:
         pagare = Pagare()
         pagare.pagareFromDoc(p)
+        if pagare.ultimoEndoso != "null":
+            returnList.append(vars(pagare))
+    
+    endosos = db.endosos.find({"id_endosatario": int(id_acreedor), "es_ultimo_endoso": True})
+    # print(list(endosos))
+    for e in list(endosos):
+        pagare = Pagare()
+        doc = db.pagares.find_one({"_id": ObjectId(e['id_pagare'])})
+        pagare.pagareFromDoc(doc)
         returnList.append(vars(pagare))
     return jsonify(returnList)
 
