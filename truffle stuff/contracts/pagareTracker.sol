@@ -52,7 +52,7 @@ contract PagareTracker {
         string valor
     );
     event RejectCreate(string _id, string message);
-    event PagareEndoso(string from, string to, string _id);
+    event AcceptEndoso(string from, string to, string _id, string firma, string id_endoso);
     event RejectEndoso(string from, string to, string _id, string message);
 
     function createPagare(
@@ -63,6 +63,7 @@ contract PagareTracker {
         string memory info
     ) public {
         if (!(bytes(pagareStore[_id]._id).length == 0)) {
+            emit RejectCreate(_id, "Ya existe el pagare con el Id");
             return;
         }
         pagareStore[_id] = Pagare(
@@ -79,46 +80,47 @@ contract PagareTracker {
         emit PagareCreate(_id, id_deudor, id_acreedor, valor);
     }
 
-    function transferPagare(
+    function endosarPagare(
         string memory id_endosante,
         string memory id_endosatario,
-        string memory _id,
+        string memory id_pagare,
         string memory fecha,
         string memory firma,
         string memory id_endoso
     ) public {
-        if (!pagareStore[_id].pendiente) {
+        if (!pagareStore[id_pagare].pendiente) {
             emit RejectEndoso(
                 id_endosante,
                 id_endosatario,
-                _id,
+                id_pagare,
                 "No existe el pagare con el id, o ya fue pagado"
             );
             return;
         }
 
-        if (!acreedorStore[id_endosante][_id]) {
+        if (!acreedorStore[id_endosante][id_pagare]) {
             emit RejectEndoso(
                 id_endosante,
                 id_endosatario,
-                _id,
+                id_pagare,
                 "El endosante no tiene el pagare con el id"
             );
             return;
         }
         endosoStore[id_endoso] = Endoso(
             id_endoso,
-            pagareStore[_id].ultimo_endoso,
+            pagareStore[id_pagare].ultimo_endoso,
             id_endosante,
             id_endosatario,
-            _id,
+            id_pagare,
             fecha,
             firma
         );
-        pagareStore[_id].ultimo_endoso = id_endoso;
-        acreedorStore[id_endosante][_id] = false;
-        acreedorStore[id_endosatario][_id] = true;
-        emit PagareEndoso(id_endosante, id_endosatario, _id);
+        pagareStore[id_pagare].ultimo_endoso = id_endoso;
+        // pagareStore[id_pagare].id_acreedor = id_endosatario;
+        acreedorStore[id_endosante][id_pagare] = false;
+        acreedorStore[id_endosatario][id_pagare] = true;
+        emit AcceptEndoso(id_endosante, id_endosatario, id_pagare, firma, id_endoso);
     }
 
     function getPagareById(string memory _id)

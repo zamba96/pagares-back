@@ -66,6 +66,8 @@ class Pagare:
         self.codigoRetiro = doc['codigoRetiro']
         self.confirmacionRetiro = doc['confirmacionRetiro']
         self.hash_transaccion = doc['hash_transaccion']
+        self.deudorAcepta = doc['deudorAcepta']
+        self.acreedorAcepta = doc['acreedorAcepta']
 
     def setId(self, id):
         self._id = id
