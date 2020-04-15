@@ -9,10 +9,10 @@ class BlockChainAccess:
     infura_url = 'https://ropsten.infura.io/v3/eb2fd22ee53744e7aa5c7f43b00536ba'
     ganache_url = "http://127.0.0.1:7545"
     # account_1 = '0xCE7f6e712F227bAc123fD5939047Db2963E10d7F'  # Ropsten
-    account_1 = '0x26d5059b40E353febAb96733A6f38f9aab0F43c7'  # Ganache
+    account_1 = '0xE5cfc1B30018147c83E599d5D6Aa79b9fc26CF4a'  # Ganache
 
     # pk = '37196d25e9c8ce0ab7e3ebfed765aa58cf5ff77f3499e790b60f342dcd0212ab' # Ropsten
-    pk = 'cafca5d99f1919d96fc6aa9d7dc135d3f9bb91ba042e78a8a82436732489ea17'  # Ganache
+    pk = '96f6e38c9334fab49ce3a08b8b2f74feb83259bbdd70c294698b104d516414ef'  # Ganache
     # account_2 = '0xdfeBbE784E15999C807e00125d7f10dc96A4Bc0b' # Fill me in
     # pk_1 = '3c554492f98ca1c8974a4f74db7fc78bae58ad8588a45cab3d330ed2aa7ea25c' # PK 1
 
@@ -39,7 +39,7 @@ class BlockChainAccess:
                 abi = json.load(json_file)['abi']
 
         contractAddress = self.web3.toChecksumAddress(
-            '0x2971c86Fa92324264F5263EE39c65a89931E1056')
+            '0xF800c7Fd253471d06bF8689Deb52d2058171b55C')
 
         self.contract = self.web3.eth.contract(
             address=contractAddress, abi=abi)
@@ -112,7 +112,7 @@ class BlockChainAccess:
             str(endoso.id_endosante) + ',' +  endoso.nombre_endosante,
             str(endoso.id_endosatario) + ',' + endoso.nombre_endosatario,
             endoso.id_pagare,
-            endoso.fecha,
+            str(endoso.fecha),
             endoso.firma,
             endoso._id).buildTransaction({
                 'nonce': nonce

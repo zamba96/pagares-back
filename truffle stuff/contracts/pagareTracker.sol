@@ -33,6 +33,7 @@ contract PagareTracker {
         string id_pagare;
         string fecha;
         string firma;
+        bool es_ultimo_endoso;
     }
 
     mapping(string => Pagare) private pagareStore;
@@ -114,8 +115,10 @@ contract PagareTracker {
             id_endosatario,
             id_pagare,
             fecha,
-            firma
+            firma,
+            true
         );
+        endosoStore[pagareStore[id_pagare].ultimo_endoso].es_ultimo_endoso = false;
         pagareStore[id_pagare].ultimo_endoso = id_endoso;
         // pagareStore[id_pagare].id_acreedor = id_endosatario;
         acreedorStore[id_endosante][id_pagare] = false;

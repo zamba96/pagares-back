@@ -21,6 +21,7 @@ class Endoso:
         self.confirmacion_transaccion = "null"
         self.codigo_retiro = "null"
         self.etapa = -1
+        self.es_ultimo_endoso = False
 
     def endosoFromRequest(self, p_request, id_pagare, anterior_endoso):
         # self._id = p_request.json['_id']
@@ -34,6 +35,7 @@ class Endoso:
         self.firma = p_request.json['firma']
         self.codigo_retiro = "null"
         self.etapa = 2
+        
 
     def endosoFromDoc(self, doc):
         self._id = str(doc['_id'])
@@ -49,6 +51,7 @@ class Endoso:
         self.confirmacion_transaccion = doc['confirmacion_transaccion']
         self.etapa = doc['etapa']
         self.codigo_retiro = doc['codigo_retiro']
+        self.es_ultimo_endoso = doc['es_ultimo_endoso']
 
     def setId(self, id):
         self._id = id
