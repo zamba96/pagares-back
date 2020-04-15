@@ -66,14 +66,23 @@ class Endoso:
         return hex_dig
 
     def from_blockchain(self, bc_string):
-        self._id = bc_string[0]
-        self.id_anterior_endoso = bc_string[1]
-        self.id_endosante = bc_string[2].split(',')[0]
-        self.nombre_endosante = bc_string[2].split(',')[1]
-        self.id_endosatario = bc_string[3].split(',')[0]
-        self.nombre_endosatario = bc_string[3].split(',')[1]
-        self.id_pagare = bc_string[4]
-        self.fecha = bc_string[5]
-        self.firma = bc_string[6]
+        # self._id = bc_string[0]
+        # self.id_anterior_endoso = bc_string[1]
+        # self.id_endosante = bc_string[2].split(',')[0]
+        # self.nombre_endosante = bc_string[2].split(',')[1]
+        # self.id_endosatario = bc_string[3].split(',')[0]
+        # self.nombre_endosatario = bc_string[3].split(',')[1]
+        # self.id_pagare = bc_string[4]
+        # self.fecha = bc_string[5]
+        # self.firma = bc_string[6]
+        return {
+            "_id": bc_string[0],
+            "id_anterior_endoso": bc_string[1],
+            "info_endosante":bc_string[2],
+            "info_endosatario":bc_string[3],
+            "id_pagare":bc_string[4],
+            "fecha":bc_string[5],
+            "firma":bc_string[6]
+        }
 
 

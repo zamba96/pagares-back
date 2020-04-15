@@ -265,7 +265,7 @@ def get_endoso_id_blockchain(id_endoso):
     endoso = EndosoEndpoint.get_endoso_id_blockchain(bca, id_endoso)
     if endoso == None:
         return "No existe el endoso en el blockchain :(", 404
-    return vars(endoso)
+    return endoso
 
 
 # Route /endosos/<id_endoso>

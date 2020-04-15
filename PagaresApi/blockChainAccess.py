@@ -129,8 +129,8 @@ class BlockChainAccess:
         if(response[0] == ''):
             return None
         endoso = Endoso()
-        endoso.from_blockchain(response)
-        return endoso
+        returnDict = endoso.from_blockchain(response)
+        return returnDict
 
 
 if __name__ == '__main__':
