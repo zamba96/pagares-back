@@ -114,7 +114,7 @@ def crear_pagare_2(id_pagare):
     pagare.terminos = request.json['terminos']
     pagare.acreedorAcepta = request.json['acreedorAcepta']
     pagare.deudorAcepta = request.json['deudorAcepta']
-    pagare.etapa = 2
+    pagare.etapa = request.json['etapa']
 
     updates = getUpdateStatement(pagare)
 
@@ -143,7 +143,7 @@ def aceptar_pagare(id_pagare):
     pagare.etapa = 2
 
     updates = getUpdateStatement(pagare)
-
+    
     db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': updates})
     doc = db.pagares.find_one({'_id':ObjectId(id_pagare)})
     pagare.pagareFromDoc(doc)
