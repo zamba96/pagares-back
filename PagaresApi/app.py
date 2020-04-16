@@ -127,7 +127,7 @@ def crear_pagare_2(id_pagare):
 # Route /pagares/<id_pagare>/etapa2/aceptar
 # PUT
 # Acepta el pagare
-@app.route('/pagares/<id_pagare>/etapa2/aceptar')
+@app.route('/pagares/<id_pagare>/etapa2/aceptar', methods=['PUT'])
 def aceptar_pagare(id_pagare):
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
@@ -166,7 +166,6 @@ def crear_pagare_3(id_pagare):
     pagare.pagareFromDoc(doc)
     pagare.fechaVencimiento = datetime.strptime(request.json['fechaVencimiento'], dateFormatStr)
     pagare.lugarCreacion = request.json['lugarCreacion']
-    pagare.lugarCumplimiento = request.json['lugarCumplimiento']
     pagare.codigoRetiro = request.json['codigoRetiro']
     pagare.etapa = 3
     
