@@ -114,7 +114,7 @@ def crear_pagare_2(id_pagare):
     pagare.terminos = request.json['terminos']
     pagare.acreedorAcepta = request.json['acreedorAcepta']
     pagare.deudorAcepta = request.json['deudorAcepta']
-    pagare.etapa = 2
+    pagare.etapa = request.json['etapa']
 
     updates = getUpdateStatement(pagare)
 
@@ -127,7 +127,7 @@ def crear_pagare_2(id_pagare):
 # Route /pagares/<id_pagare>/etapa2/aceptar
 # PUT
 # Acepta el pagare
-@app.route('/pagares/<id_pagare>/etapa2/aceptar')
+@app.route('/pagares/<id_pagare>/etapa2/aceptar', methods=['PUT'])
 def aceptar_pagare(id_pagare):
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
@@ -143,7 +143,7 @@ def aceptar_pagare(id_pagare):
     pagare.etapa = 2
 
     updates = getUpdateStatement(pagare)
-
+    
     db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': updates})
     doc = db.pagares.find_one({'_id':ObjectId(id_pagare)})
     pagare.pagareFromDoc(doc)
@@ -166,7 +166,6 @@ def crear_pagare_3(id_pagare):
     pagare.pagareFromDoc(doc)
     pagare.fechaVencimiento = datetime.strptime(request.json['fechaVencimiento'], dateFormatStr)
     pagare.lugarCreacion = request.json['lugarCreacion']
-    pagare.lugarCumplimiento = request.json['lugarCumplimiento']
     pagare.codigoRetiro = request.json['codigoRetiro']
     pagare.etapa = 3
     
@@ -244,7 +243,7 @@ def getPagaresAcreedor(id_acreedor):
     for p in pagaresList:
         pagare = Pagare()
         pagare.pagareFromDoc(p)
-        if pagare.ultimoEndoso != "null":
+        if pagare.ultimoEndoso == "null":
             returnList.append(vars(pagare))
     
     endosos = db.endosos.find({"id_endosatario": int(id_acreedor), "es_ultimo_endoso": True})
