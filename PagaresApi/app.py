@@ -503,6 +503,9 @@ def delete_pagare_1(id_pagare):
     return str(doc2)
 
 
+@app.route('/transacciones', methods=['GET'])
+def get_all_transactions():
+    return jsonify(bca.get_all_transactions())
 
 
 def getUpdateStatement(pagare: Pagare):

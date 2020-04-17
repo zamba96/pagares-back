@@ -3,15 +3,18 @@ import json
 from Pagare import Pagare
 import binascii
 from Endoso import Endoso
+import requests
+from pprint import pprint
 
 
 class BlockChainAccess:
     infura_url = 'https://ropsten.infura.io/v3/eb2fd22ee53744e7aa5c7f43b00536ba'
     ganache_url = "http://127.0.0.1:7545"
     account_1 = '0xCE7f6e712F227bAc123fD5939047Db2963E10d7F'  # Ropsten
+    infura_wss = 'wss://ropsten.infura.io/ws/v3/eb2fd22ee53744e7aa5c7f43b00536ba'
     # account_1 = '0xE5cfc1B30018147c83E599d5D6Aa79b9fc26CF4a'  # Ganache
 
-    pk = '37196d25e9c8ce0ab7e3ebfed765aa58cf5ff77f3499e790b60f342dcd0212ab' # Ropsten
+    pk = '37196d25e9c8ce0ab7e3ebfed765aa58cf5ff77f3499e790b60f342dcd0212ab'  # Ropsten
     # pk = '96f6e38c9334fab49ce3a08b8b2f74feb83259bbdd70c294698b104d516414ef'  # Ganache
     # account_2 = '0xdfeBbE784E15999C807e00125d7f10dc96A4Bc0b' # Fill me in
     # pk_1 = '3c554492f98ca1c8974a4f74db7fc78bae58ad8588a45cab3d330ed2aa7ea25c' # PK 1
@@ -26,6 +29,7 @@ class BlockChainAccess:
     def __init__(self):
         # self.web3 = Web3(Web3.HTTPProvider(self.ganache_url))
         self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
+        # self.web3 = Web3(Web3.WebsocketProvider(self.infura_wss))
         if(not self.web3.isConnected()):
             print("-------------------Blockchain Access--------------------------")
             print('Connection to {}: Failed\nExiting...'.format(self.web3.provider))
@@ -38,11 +42,11 @@ class BlockChainAccess:
             with open('../truffle stuff/build/contracts/PagareTracker.json') as json_file:
                 abi = json.load(json_file)['abi']
 
-        contractAddress = self.web3.toChecksumAddress(
+        self.contractAddress = self.web3.toChecksumAddress(
             '0x9D7F19128E83DcBa77271FEE9d72BD70C9fa2048')
 
         self.contract = self.web3.eth.contract(
-            address=contractAddress, abi=abi)
+            address=self.contractAddress, abi=abi)
 
     # Methods
     # Info tiene las variables: fecha_creacion,fecha_vencimiento,fecha_expiracion,lugar_creacion,lugar_cumplimiento,firma
@@ -109,7 +113,7 @@ class BlockChainAccess:
     def endosar_pagare(self, endoso: Endoso):
         nonce = self.web3.eth.getTransactionCount(self.account_1)
         tx = self.contract.functions.endosarPagare(
-            str(endoso.id_endosante) + ',' +  endoso.nombre_endosante,
+            str(endoso.id_endosante) + ',' + endoso.nombre_endosante,
             str(endoso.id_endosatario) + ',' + endoso.nombre_endosatario,
             endoso.id_pagare,
             str(endoso.fecha),
@@ -132,45 +136,34 @@ class BlockChainAccess:
         returnDict = endoso.from_blockchain(response)
         return returnDict
 
+    def get_all_transaction_hashes(self):
+        url = 'http://api-ropsten.etherscan.io/api?module=account&action=txlist&address=0x9D7F19128E83DcBa77271FEE9d72BD70C9fa2048&startblock=0&endblock=99999999&sort=asc&apikey=B8S6I3JS3FHX7Y6EQN3JDD2KI4THD6P495'
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0'}
+        req = requests.get(url=url, headers=headers)
+
+        data = req.json()['result']
+        hashes = []
+        del data[0]
+        for a in data:
+            hashes.append(a['hash'])
+        return hashes
+    
+    def get_transaction_details(self, hash):
+        transaction = self.web3.eth.getTransaction(hash)
+        return transaction
+
+    def get_all_transactions(self):
+        hashes = self.get_all_transaction_hashes()
+        returnList = []
+        for hash in hashes:
+            hexInput = self.get_transaction_details(hash)['input']
+            f, decoded = self.contract.decode_function_input(hexInput)
+            returnList.append({hash:decoded})
+        # print(returnList)
+        return returnList
+
 
 if __name__ == '__main__':
     bca = BlockChainAccess()
-
-    pagare = Pagare()
-    pagare._id = "2"
-    pagare.valor = 100
-    pagare.nombreDeudor = "deudor"
-    pagare.idDeudor = "001"
-    pagare.nombreAcreedor = "acreedor"
-    pagare.idAcreedor = "002"
-    pagare.fechaCreacion = "13/4/20"
-    pagare.lugarCreacion = "Creado Bogota"
-    pagare.fechaVencimiento = "13/10/20"
-    pagare.fechaExpiracion = "13/4/2025"
-    pagare.lugarCumplimiento = "Cumplimiento Bogota"
-    pagare.firma = "FIRMA:0A0BBCF143A"
-    pagare.ultimoEndoso = "null"
-    pagare.pendiente = True
-    pagare.etapa = 4
-    pagare.terminos = "Terminos del pagare"
-    pagare.codigoRetiro = "Codigo Retiro 001"
-    pagare.confirmacionRetiro = "Confirmacion Retiro 002"
-    pagare.hash_transaccion = "null"
-    pagare.deudorAcepta = False
-    pagare.acreedorAcepta = False
-    tx_hash = bca.crear_pagare(pagare)
-
-    print("Creacion: " + tx_hash)
-    print(bca.get_pagare_id("2"))
-
-    endoso = Endoso()
-    endoso._id = "202"
-    endoso.id_endosante = "002"
-    endoso.nombre_endosante = "acreedor"
-    endoso.id_endosatario = "003"
-    endoso.nombre_endosatario = "endosatario1"
-    endoso.fecha = "4/13/2020"
-    endoso.firma = endoso.firmar()
-    endoso.id_pagare = "2"
-    print("Endoso tx: " + bca.endosar_pagare(endoso))
-    print(bca.get_pagare_id("2"))
+    pprint(bca.get_all_transactions())
