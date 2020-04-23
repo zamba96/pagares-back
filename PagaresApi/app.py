@@ -505,7 +505,7 @@ def crear_endoso_etapa_3(id_pagare):
     pagare.pagareFromDoc(doc)
     anterior_endoso = pagare.ultimoEndoso
     endoso = Endoso()
-    docEndoso = db.endosos.find_one({"id_pagare":id_pagare, "etapa": 1})
+    docEndoso = db.endosos.find_one({"id_pagare":id_pagare, "etapa": 2})
     if docEndoso == None:
         return "No existe un endoso pendiente (en etapa 3) para el pagare designado", 401
     endoso.endosoFromDoc(docEndoso)
