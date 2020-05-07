@@ -185,7 +185,7 @@ class BlockChainAccess:
         # print(returnList)
         return returnList
 
-    def create_subbomain(self, subdomain, owner):
+    def create_subdomain(self, subdomain, owner):
 
         ns = self.ns
         eth_address = ns.address('pagaresvirtuales.test')
@@ -255,6 +255,7 @@ if __name__ == '__main__':
     bca = BlockChainAccess()
     # pprint(bca.get_all_transactions())
     newOwner = '0xfabc9d025e7B0F7720300c1F99a57fd6e4413934'  # testaccount 3
-    # bca.create_subbomain('prueba4', bca.account_1)
-    print(bca.get_owner_domain('prueba4.pagaresvirtuales.test'))
-    print(bca.get_address_from_name('prueba4.pagaresvirtuales.test'))
+    otroOwner = '0x025dc30A373111F8b602389360C11645df83c6c2'
+    bca.create_subbomain('prueba5', otroOwner)
+    print(bca.get_owner_domain('prueba5.pagaresvirtuales.test'))
+    print(bca.get_address_from_name('prueba5.pagaresvirtuales.test'))
