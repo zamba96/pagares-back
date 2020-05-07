@@ -4,7 +4,10 @@ from Pagare import Pagare
 import binascii
 from Endoso import Endoso
 import requests
+from ens import ENS
 from pprint import pprint
+from web3.middleware import construct_sign_and_send_raw_middleware
+from eth_account import Account
 
 
 class BlockChainAccess:
@@ -25,10 +28,13 @@ class BlockChainAccess:
 
     web3 = None
     contract = None
+    ns = None
 
     def __init__(self):
         # self.web3 = Web3(Web3.HTTPProvider(self.ganache_url))
+
         self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
+        self.ns = ENS.fromWeb3(self.web3)
         # self.web3 = Web3(Web3.WebsocketProvider(self.infura_wss))
         if(not self.web3.isConnected()):
             print("-------------------Blockchain Access--------------------------")
@@ -47,6 +53,22 @@ class BlockChainAccess:
 
         self.contract = self.web3.eth.contract(
             address=self.contractAddress, abi=abi)
+
+        with open('resolver.json') as json_file:
+            abi_resolver = json.load(json_file)
+
+        with open('registry.json') as json_file:
+            abi_registry = json.load(json_file)
+
+        self.resolverAddress = self.web3.toChecksumAddress(
+            '0x42D63ae25990889E35F215bC95884039Ba354115')
+        self.resolverContract = self.web3.eth.contract(
+            address=self.resolverAddress, abi=abi_resolver)
+
+        self.registerAddress = self.web3.toChecksumAddress(
+            '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e')
+        self.registryContract = self.web3.eth.contract(
+            address=self.registerAddress, abi=abi_registry)
 
     # Methods
     # Info tiene las variables: fecha_creacion,fecha_vencimiento,fecha_expiracion,lugar_creacion,lugar_cumplimiento,firma
@@ -86,7 +108,7 @@ class BlockChainAccess:
         info_deudor = str(pagare.idDeudor) + ',' + pagare.nombreDeudor
         nonce = self.web3.eth.getTransactionCount(self.account_1)
         tx = self.contract.functions.createPagare(pagare._id, str(pagare.valor), info_deudor, info_acreedor, info).buildTransaction({
-            'nonce': nonce
+            'nonce': nonce,
         })
         signed_tx = self.web3.eth.account.sign_transaction(
             tx, private_key=self.pk)
@@ -148,7 +170,7 @@ class BlockChainAccess:
         for a in data:
             hashes.append(a['hash'])
         return hashes
-    
+
     def get_transaction_details(self, hash):
         transaction = self.web3.eth.getTransaction(hash)
         return transaction
@@ -159,11 +181,80 @@ class BlockChainAccess:
         for hash in hashes:
             hexInput = self.get_transaction_details(hash)['input']
             f, decoded = self.contract.decode_function_input(hexInput)
-            returnList.append({hash:decoded})
+            returnList.append({hash: decoded})
         # print(returnList)
         return returnList
 
+    def create_subbomain(self, subdomain, owner):
 
+        ns = self.ns
+        eth_address = ns.address('pagaresvirtuales.test')
+        # print(eth_address)
+        name = '{}.pagaresvirtuales.test'.format(subdomain)
+        # print("setup address")
+        # print(self.web3.eth.accounts)
+        acc = Account.from_key("0x" + self.pk)
+        # print(acc.key)
+        print(ns.owner('pagaresvirtuales.test'))
+        # print(self.account_1)
+        
+        normalizedName = ns.nameprep(name)
+        normalizedNode = ns.nameprep('pagaresvirtuales.test')
+        normalizedLabel = ns.nameprep(subdomain)
+        node = ns.namehash('pagaresvirtuales.test')
+        wholeNameHash = ns.namehash(name)
+        label = ns.namehash(normalizedLabel)
+        label = self.web3.keccak(text=normalizedLabel)
+        bytes_owner = self.registryContract.functions.owner(node).call()
+        nonce = self.web3.eth.getTransactionCount(self.account_1)
+        tx = self.registryContract.functions.setSubnodeOwner(node, label, owner).buildTransaction({
+            'nonce': nonce,
+            'from': self.account_1,
+            'gas': 100000,
+        })
+        signed_tx = self.web3.eth.account.sign_transaction(
+            tx, private_key=self.pk)
+        # self.web3.middleware_onion.add(
+        #     construct_sign_and_send_raw_middleware(acc))
+
+        tx_hash = self.web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        tx_hash_string = "0x" + str(binascii.hexlify(tx_hash)).split("'")[1]
+
+        print("Subnode created: {}, waiting for confirmation...".format(tx_hash_string))
+        tx_receipt = self.web3.eth.waitForTransactionReceipt(tx_hash, timeout=300)
+        print("Subnode creation confirmed")
+        return "OK"
+
+        # SetAdr
+        # nonce = self.web3.eth.getTransactionCount(self.account_1)
+        # tx = self.resolverContract.functions.setAddr(wholeNameHash, owner).buildTransaction({
+        #     'nonce': nonce,
+        #     'from': self.account_1,
+        #     'gas': 100000,
+        # })
+        # signed_tx = self.web3.eth.account.sign_transaction(
+        #     tx, private_key=self.pk)
+        # # self.web3.middleware_onion.add(
+        # #     construct_sign_and_send_raw_middleware(acc))
+
+        # tx_hash = self.web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        # tx_hash_string = "0x" + str(binascii.hexlify(tx_hash)).split("'")[1]
+
+        # print("Address Set: {}, waiting for confirmation...".format(tx_hash_string))
+        # tx_receipt = self.web3.eth.waitForTransactionReceipt(tx_hash, timeout=300)
+        # print("Address set confirmed")
+
+    def get_owner_domain(self, domain):
+        ns = self.ns
+        return ns.owner(domain)
+
+    def get_address_from_name(self, domain):
+        ns = self.ns
+        return ns.address(domain)
 if __name__ == '__main__':
     bca = BlockChainAccess()
-    pprint(bca.get_all_transactions())
+    # pprint(bca.get_all_transactions())
+    newOwner = '0xfabc9d025e7B0F7720300c1F99a57fd6e4413934'  # testaccount 3
+    # bca.create_subbomain('prueba4', bca.account_1)
+    print(bca.get_owner_domain('prueba4.pagaresvirtuales.test'))
+    print(bca.get_address_from_name('prueba4.pagaresvirtuales.test'))

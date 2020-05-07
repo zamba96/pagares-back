@@ -10,6 +10,7 @@ from blockChainAccess import BlockChainAccess
 from Pagare import Pagare
 import EndosoEndpoint
 from Endoso import Endoso
+import threading
 
 dateFormatStr = '%d-%m-%Y'
 
@@ -507,6 +508,21 @@ def get_all_transactions():
     return jsonify(bca.get_all_transactions())
 
 
+# ENS API
+@app.route('/ens', methods=['POST'])
+def create_subdomain():
+    bca.create_subdomain(request.json['subdomain'], request.json['owner'])
+    return "OK", 200
+
+@app.route('/ens/<domain>', methods=['GET'])
+def resolveSubdomainToAddress(domain):
+    return bca.get_address_from_name(domain)
+
+@app.route('/ens/<domain>/owner', methods=['GET'])
+def getDomainOwner(domain):
+    return bca.get_owner_domain(domain)
+
+
 def getUpdateStatement(pagare: Pagare):
     return {
         'valor':pagare.valor,
@@ -531,6 +547,9 @@ def getUpdateStatement(pagare: Pagare):
         'acreedorAcepta':pagare.acreedorAcepta
 
     }
+
+
 # --------Helper Methods------------
+
 
 
