@@ -579,11 +579,15 @@ def create_subdomain():
 
 @app.route('/ens/<domain>', methods=['GET'])
 def resolveSubdomainToAddress(domain):
-    return bca.get_address_from_name(domain)
+    r = bca.get_address_from_name(domain)
+    print(r)
+    return r
 
 @app.route('/ens/<domain>/owner', methods=['GET'])
 def getDomainOwner(domain):
-    return bca.get_owner_domain(domain)
+    r = bca.get_owner_domain(domain)
+    print(r)
+    return r
 
 
 def getUpdateStatement(pagare: Pagare):
