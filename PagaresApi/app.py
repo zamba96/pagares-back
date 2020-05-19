@@ -487,6 +487,7 @@ def crear_endoso_etapa_2(id_pagare):
     #actualizar endoso
     db.endosos.update_one({'_id':ObjectId(endoso._id)}, {'$set':{
         "codigo_retiro": endoso.codigo_retiro,
+        "etapa": endoso.etapa,
     }})
     return vars(endoso)
 
@@ -581,6 +582,8 @@ def create_subdomain():
 def resolveSubdomainToAddress(domain):
     r = bca.get_address_from_name(domain)
     print(r)
+    if r == None:
+        return "Ese ENS no referencia ningun Address", 404
     return r
 
 @app.route('/ens/<domain>/owner', methods=['GET'])
