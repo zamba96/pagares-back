@@ -21,6 +21,7 @@ db = client.tesis
 app = Flask(__name__)
 bca = BlockChainAccess()
 
+
 @app.route('/')
 def hello_world():
     return "Welcome to the Mock Blockchain API"
@@ -68,7 +69,7 @@ def getPagareById(id_pagare):
     try:
         pagareDoc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if pagareDoc == None:
         return "Pagare no encontrado", 404
     pagare = Pagare()
@@ -77,7 +78,7 @@ def getPagareById(id_pagare):
 
 
 # route /pagares/etapa1/
-# PUT 
+# PUT
 # Crea un nuevo pagare en etapa 1
 @app.route('/pagares/etapa1', methods=['POST'])
 def crear_pagare_1():
@@ -89,23 +90,21 @@ def crear_pagare_1():
     pagare.etapa = 1
     _id = db.pagares.insert_one(vars(pagare)).inserted_id
     pagare = Pagare()
-    doc = db.pagares.find_one({'_id':_id})
+    doc = db.pagares.find_one({'_id': _id})
     pagare.pagareFromDoc(doc)
     return vars(pagare)
 
 
-
-
 # route /pagares/<id_pagare>/etapa2
-# PUT 
+# PUT
 # Crea un nuevo pagare en etapa 2
 @app.route('/pagares/<id_pagare>/etapa2', methods=['PUT'])
 def crear_pagare_2(id_pagare):
-    
+
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
 
@@ -119,8 +118,8 @@ def crear_pagare_2(id_pagare):
 
     updates = getUpdateStatement(pagare)
 
-    db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': updates})
-    doc = db.pagares.find_one({'_id':ObjectId(id_pagare)})
+    db.pagares.update_one({'_id': ObjectId(id_pagare)}, {'$set': updates})
+    doc = db.pagares.find_one({'_id': ObjectId(id_pagare)})
     pagare.pagareFromDoc(doc)
     return vars(pagare)
 
@@ -133,7 +132,7 @@ def aceptar_pagare(id_pagare):
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
 
@@ -144,9 +143,9 @@ def aceptar_pagare(id_pagare):
     pagare.etapa = 2
 
     updates = getUpdateStatement(pagare)
-    
-    db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': updates})
-    doc = db.pagares.find_one({'_id':ObjectId(id_pagare)})
+
+    db.pagares.update_one({'_id': ObjectId(id_pagare)}, {'$set': updates})
+    doc = db.pagares.find_one({'_id': ObjectId(id_pagare)})
     pagare.pagareFromDoc(doc)
     return vars(pagare)
 
@@ -155,25 +154,26 @@ def aceptar_pagare(id_pagare):
 # Crea un nuevo pagare en etapa 3
 @app.route('/pagares/<id_pagare>/etapa3', methods=['PUT'])
 def crear_pagare_3(id_pagare):
-    
+
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
 
     pagare = Pagare()
     pagare.pagareFromDoc(doc)
-    pagare.fechaVencimiento = datetime.strptime(request.json['fechaVencimiento'], dateFormatStr)
+    pagare.fechaVencimiento = datetime.strptime(
+        request.json['fechaVencimiento'], dateFormatStr)
     pagare.lugarCreacion = request.json['lugarCreacion']
     pagare.codigoRetiro = request.json['codigoRetiro']
     pagare.etapa = 3
-    
+
     updates = getUpdateStatement(pagare)
 
-    db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': updates})
-    doc = db.pagares.find_one({'_id':ObjectId(id_pagare)})
+    db.pagares.update_one({'_id': ObjectId(id_pagare)}, {'$set': updates})
+    doc = db.pagares.find_one({'_id': ObjectId(id_pagare)})
     pagare.pagareFromDoc(doc)
     return vars(pagare)
 
@@ -183,11 +183,11 @@ def crear_pagare_3(id_pagare):
 # Crea un nuevo pagare en etapa 4
 @app.route('/pagares/<id_pagare>/etapa4', methods=['PUT'])
 def crear_pagare_4(id_pagare):
-    
+
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
 
@@ -204,8 +204,8 @@ def crear_pagare_4(id_pagare):
     pagare.hash_transaccion = hash_transaccion
     updates = getUpdateStatement(pagare)
 
-    db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': updates})
-    doc = db.pagares.find_one({'_id':ObjectId(id_pagare)})
+    db.pagares.update_one({'_id': ObjectId(id_pagare)}, {'$set': updates})
+    doc = db.pagares.find_one({'_id': ObjectId(id_pagare)})
     pagare.pagareFromDoc(doc)
     return vars(pagare)
 
@@ -223,7 +223,7 @@ def get_pagare_blockchain(id_pagare):
 # Trae la lista de pagares del deudor id_deudor
 @app.route('/pagares/deudor/<id_deudor>', methods=['GET'])
 def getPagaresDeudor(id_deudor):
-    pagares = db.pagares.find({'idDeudor':int(id_deudor) })
+    pagares = db.pagares.find({'idDeudor': int(id_deudor)})
     pagaresList = list(pagares)
     returnList = []
     for p in pagaresList:
@@ -238,7 +238,7 @@ def getPagaresDeudor(id_deudor):
 # Trae la lista de pagares del acreedor id_acreedor
 @app.route('/pagares/acreedor/<id_acreedor>', methods=['GET'])
 def getPagaresAcreedor(id_acreedor):
-    pagares = db.pagares.find({'idAcreedor':int(id_acreedor)})
+    pagares = db.pagares.find({'idAcreedor': int(id_acreedor)})
     pagaresList = list(pagares)
     returnList = []
     for p in pagaresList:
@@ -246,8 +246,9 @@ def getPagaresAcreedor(id_acreedor):
         pagare.pagareFromDoc(p)
         if pagare.ultimoEndoso == "null":
             returnList.append(vars(pagare))
-    
-    endosos = db.endosos.find({"id_endosatario": int(id_acreedor), "es_ultimo_endoso": True})
+
+    endosos = db.endosos.find(
+        {"id_endosatario": int(id_acreedor), "es_ultimo_endoso": True})
     # print(list(endosos))
     for e in list(endosos):
         pagare = Pagare()
@@ -272,7 +273,7 @@ def get_endoso_id_blockchain(id_endoso):
 # Trae endosos realizados por el endosante con el id dado
 @app.route('/endosos/endosante/<id_endosante>', methods=['GET'])
 def get_endoso_endosante(id_endosante):
-    endosos = db.endosos.find({"id_endosante" : int(id_endosante)})
+    endosos = db.endosos.find({"id_endosante": int(id_endosante)})
     pagaresList = list(endosos)
     returnList = []
     for e in pagaresList:
@@ -286,7 +287,7 @@ def get_endoso_endosante(id_endosante):
 # Trae endosos realizados por el endosatario con el id dado
 @app.route('/endosos/endosatario/<id_endosatario>', methods=['GET'])
 def get_endoso_endosatario(id_endosatario):
-    endosos = db.endosos.find({"id_endosatario" : int(id_endosatario)})
+    endosos = db.endosos.find({"id_endosatario": int(id_endosatario)})
     pagaresList = list(endosos)
     returnList = []
     for e in pagaresList:
@@ -297,19 +298,18 @@ def get_endoso_endosatario(id_endosatario):
 
 # Route /endosos/<id_endoso>
 # GET
-# Trae el endoso con id dado 
+# Trae el endoso con id dado
 @app.route('/endosos/<id_endoso>', methods=['GET'])
 def get_endoso_id(id_endoso):
     try:
         doc = db.endosos.find_one({"_id": ObjectId(id_endoso)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Endoso no encontrado", 404
     endoso = Endoso()
     endoso.endosoFromDoc(doc)
     return vars(endoso)
-
 
 
 # Route /pagares/<id_pagare>/endosos
@@ -320,10 +320,10 @@ def crear_endoso(id_pagare):
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
-    
+
     pagare = Pagare()
     pagare.pagareFromDoc(doc)
     anterior_endoso = pagare.ultimoEndoso
@@ -336,7 +336,8 @@ def crear_endoso(id_pagare):
         return "Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare), 401
     if pagare.ultimoEndoso != "null":
         ultimoEndoso = Endoso()
-        ultimoEndoso.endosoFromDoc(db.endosos.find_one({"_id":ObjectId(pagare.ultimoEndoso)}))
+        ultimoEndoso.endosoFromDoc(db.endosos.find_one(
+            {"_id": ObjectId(pagare.ultimoEndoso)}))
         if ultimoEndoso.id_endosatario != endoso.id_endosante:
             return "Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare), 401
     # Agregar endoso a db
@@ -345,15 +346,16 @@ def crear_endoso(id_pagare):
     # Agregar Endoso a BC
     tx_hash = bca.endosar_pagare(endoso)
     endoso.hash_transaccion = tx_hash
-    #Actualizar Pagare
+    # Actualizar Pagare
     pagare.ultimoEndoso = endoso._id
     pagareUpdates = getUpdateStatement(pagare)
-    db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': pagareUpdates})
-    #actualizar endoso
-    db.endosos.update_one({'_id':ObjectId(endoso._id)}, {'$set': {
-        'hash_transaccion':tx_hash,
-        }})
-    doc = db.endosos.find_one({'_id':ObjectId(endoso._id)})
+    db.pagares.update_one({'_id': ObjectId(id_pagare)},
+                          {'$set': pagareUpdates})
+    # actualizar endoso
+    db.endosos.update_one({'_id': ObjectId(endoso._id)}, {'$set': {
+        'hash_transaccion': tx_hash,
+    }})
+    doc = db.endosos.find_one({'_id': ObjectId(endoso._id)})
     endosoR = Endoso()
     endosoR.endosoFromDoc(doc)
     return vars(endosoR)
@@ -362,7 +364,7 @@ def crear_endoso(id_pagare):
 # Retorna todos los endosos actuales de la DB para el pagare dado
 @app.route('/pagares/<id_pagare>/endosos', methods=['GET'])
 def get_endosos_by_pagare(id_pagare):
-    endosos = db.endosos.find({'id_pagare':id_pagare})
+    endosos = db.endosos.find({'id_pagare': id_pagare})
     pagaresList = list(endosos)
     returnList = []
     for e in pagaresList:
@@ -379,20 +381,20 @@ def get_ultimo_endoso(id_pagare):
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
     pagare = Pagare()
     pagare.pagareFromDoc(doc)
     if pagare.ultimoEndoso == "null":
         return "El pagare {} no tiene endosos".format(pagare._id), 404
-    doc = db.endosos.find_one({"_id":ObjectId(pagare.ultimoEndoso)})
+    doc = db.endosos.find_one({"_id": ObjectId(pagare.ultimoEndoso)})
     endoso = Endoso()
     endoso.endosoFromDoc(doc)
     return vars(endoso)
-    
 
-# Route /endosos 
+
+# Route /endosos
 # GET
 # Retorna todos los endosos actuales de la DB para el pagare dado
 @app.route('/endosos', methods=['GET'])
@@ -415,14 +417,17 @@ def endosar_etapa_1(id_pagare):
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
     pagare = Pagare()
     pagare.pagareFromDoc(doc)
     # Revisar que no exista endoso pendiente
-    doc = db.endosos.find_one({"id_pagare": id_pagare})
+    doc = db.endosos.find_one({"id_pagare": id_pagare, "etapa": 1})
+    doc2 = db.endosos.find_one({"id_pagare": id_pagare, "etapa": 2})
     if doc != None:
+        return "Ya existe un endoso con id {} en proceso para el pagare {}".format(doc["_id"], id_pagare), 401
+    if doc2 != None:
         return "Ya existe un endoso con id {} en proceso para el pagare {}".format(doc["_id"], id_pagare), 401
 
     # Revisar legitimo tenedor
@@ -432,7 +437,8 @@ def endosar_etapa_1(id_pagare):
         return "Error: {} no es el acreedor actual del pagare {}".format(request.json['nombre_endosante'], id_pagare), 401
     if pagare.ultimoEndoso != "null":
         ultimoEndoso = Endoso()
-        ultimoEndoso.endosoFromDoc(db.endosos.find_one({"_id":ObjectId(pagare.ultimoEndoso)}))
+        ultimoEndoso.endosoFromDoc(db.endosos.find_one(
+            {"_id": ObjectId(pagare.ultimoEndoso)}))
         if ultimoEndoso.id_endosatario != request.json['id_endosante']:
             return "Error: {} no es el acreedor actual del pagare {}".format(request.json['nombre_endosante'], id_pagare), 401
     # Crear endoso
@@ -444,7 +450,7 @@ def endosar_etapa_1(id_pagare):
     endoso.nombre_endosatario = request.json['nombre_endosatario']
     endoso.id_anterior_endoso = pagare.ultimoEndoso
     endoso.id_pagare = id_pagare
-    
+
     # Send to DB
     inserted_id = db.endosos.insert_one(vars(endoso)).inserted_id
 
@@ -454,20 +460,20 @@ def endosar_etapa_1(id_pagare):
 
 # Route: /pagares/<id_pagare>/endosos/etapa2
 # POST
-# Crea un endoso en etapa2 
+# Crea un endoso en etapa2
 @app.route('/pagares/<id_pagare>/endosos/etapa2', methods=['POST'])
 def crear_endoso_etapa_2(id_pagare):
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
-    
+
     pagare = Pagare()
     pagare.pagareFromDoc(doc)
     endoso = Endoso()
-    docEndoso = db.endosos.find_one({"id_pagare":id_pagare})
+    docEndoso = db.endosos.find_one({"id_pagare": id_pagare})
     if docEndoso == None:
         return "No existe un endoso pendiente (en etapa 2) para el pagare designado", 401
     endoso.endosoFromDoc(docEndoso)
@@ -478,14 +484,15 @@ def crear_endoso_etapa_2(id_pagare):
         return "Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare), 401
     if pagare.ultimoEndoso != "null":
         ultimoEndoso = Endoso()
-        ultimoEndoso.endosoFromDoc(db.endosos.find_one({"_id":ObjectId(pagare.ultimoEndoso)}))
+        ultimoEndoso.endosoFromDoc(db.endosos.find_one(
+            {"_id": ObjectId(pagare.ultimoEndoso)}))
         if ultimoEndoso.id_endosatario != endoso.id_endosante:
             return "Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare), 401
     # agregar codigo de retiro
     endoso.codigo_retiro = request.json['codigo_retiro']
     endoso.etapa = 2
-    #actualizar endoso
-    db.endosos.update_one({'_id':ObjectId(endoso._id)}, {'$set':{
+    # actualizar endoso
+    db.endosos.update_one({'_id': ObjectId(endoso._id)}, {'$set': {
         "codigo_retiro": endoso.codigo_retiro,
         "etapa": endoso.etapa,
     }})
@@ -499,15 +506,15 @@ def crear_endoso_etapa_3(id_pagare):
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
-    
+
     pagare = Pagare()
     pagare.pagareFromDoc(doc)
     anterior_endoso = pagare.ultimoEndoso
     endoso = Endoso()
-    docEndoso = db.endosos.find_one({"id_pagare":id_pagare})
+    docEndoso = db.endosos.find_one({"id_pagare": id_pagare})
     if docEndoso == None:
         return "No existe un endoso pendiente (en etapa 3) para el pagare designado", 401
     endoso.endosoFromDoc(docEndoso)
@@ -518,7 +525,8 @@ def crear_endoso_etapa_3(id_pagare):
         return "Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare), 401
     if pagare.ultimoEndoso != "null":
         ultimoEndoso = Endoso()
-        ultimoEndoso.endosoFromDoc(db.endosos.find_one({"_id":ObjectId(pagare.ultimoEndoso)}))
+        ultimoEndoso.endosoFromDoc(db.endosos.find_one(
+            {"_id": ObjectId(pagare.ultimoEndoso)}))
         if ultimoEndoso.id_endosatario != endoso.id_endosante:
             return "Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare), 401
     # Termina de llenar el endoso
@@ -529,12 +537,13 @@ def crear_endoso_etapa_3(id_pagare):
     # Agregar Endoso a BC
     tx_hash = bca.endosar_pagare(endoso)
     endoso.hash_transaccion = tx_hash
-    #Actualizar Pagare
+    # Actualizar Pagare
     pagare.ultimoEndoso = endoso._id
     pagareUpdates = getUpdateStatement(pagare)
-    db.pagares.update_one({'_id':ObjectId(id_pagare)}, {'$set': pagareUpdates})
-    #actualizar endoso
-    db.endosos.update_one({'_id':ObjectId(endoso._id)}, {'$set':{
+    db.pagares.update_one({'_id': ObjectId(id_pagare)},
+                          {'$set': pagareUpdates})
+    # actualizar endoso
+    db.endosos.update_one({'_id': ObjectId(endoso._id)}, {'$set': {
         "firma": endoso.firma,
         "fecha": endoso.fecha,
         "etapa": 3,
@@ -544,8 +553,9 @@ def crear_endoso_etapa_3(id_pagare):
     }})
     # Actualizar anterior endoso
     if anterior_endoso != "null":
-        db.endosos.update_one({"_id":ObjectId(anterior_endoso)}, {"$set": {"es_ultimo_endoso": False} })
-    doc = db.endosos.find_one({'_id':ObjectId(endoso._id)})
+        db.endosos.update_one({"_id": ObjectId(anterior_endoso)}, {
+                              "$set": {"es_ultimo_endoso": False}})
+    doc = db.endosos.find_one({'_id': ObjectId(endoso._id)})
     endosoR = Endoso()
     endosoR.endosoFromDoc(doc)
     return vars(endosoR)
@@ -557,12 +567,13 @@ def delete_pagare_1(id_pagare):
     try:
         doc = db.pagares.find_one({"_id": ObjectId(id_pagare)})
     except:
-        return "El id es invalido", 400 
+        return "El id es invalido", 400
     if doc == None:
         return "Pagare no encontrado", 404
     if doc['ultimoEndoso'] == "null":
         return "No existe un endoso", 304
-    doc2 = db.endosos.delete_one({"id_pagare": id_pagare, "etapa":1}).deleted_count
+    doc2 = db.endosos.delete_one(
+        {"id_pagare": id_pagare, "etapa": 1}).deleted_count
     print(doc2)
     return str(doc2)
 
@@ -578,6 +589,7 @@ def create_subdomain():
     bca.create_subdomain(request.json['subdomain'], request.json['owner'])
     return "OK", 200
 
+
 @app.route('/ens/<domain>', methods=['GET'])
 def resolveSubdomainToAddress(domain):
     r = bca.get_address_from_name(domain)
@@ -585,6 +597,7 @@ def resolveSubdomainToAddress(domain):
     if r == None:
         return "Ese ENS no referencia ningun Address", 404
     return r
+
 
 @app.route('/ens/<domain>/owner', methods=['GET'])
 def getDomainOwner(domain):
@@ -595,31 +608,29 @@ def getDomainOwner(domain):
 
 def getUpdateStatement(pagare: Pagare):
     return {
-        'valor':pagare.valor,
-        'nombreDeudor':pagare.nombreDeudor,
-        'idDeudor':pagare.idDeudor,
-        'nombreAcreedor':pagare.nombreAcreedor,
-        'idAcreedor':pagare.idAcreedor,
-        'fechaCreacion':pagare.fechaCreacion,
-        'lugarCreacion':pagare.lugarCreacion,
-        'fechaVencimiento':pagare.fechaVencimiento,
-        'fechaExpiracion':pagare.fechaExpiracion,
-        'lugarCumplimiento':pagare.lugarCumplimiento,
-        'firma':pagare.firma,
-        'ultimoEndoso':pagare.ultimoEndoso,
-        'pendiente':pagare.pendiente,
-        'etapa':pagare.etapa,
-        'terminos':pagare.terminos,
-        'codigoRetiro':pagare.codigoRetiro,
-        'confirmacionRetiro':pagare.confirmacionRetiro,
-        'hash_transaccion':pagare.hash_transaccion,
-        'deudorAcepta':pagare.deudorAcepta,
-        'acreedorAcepta':pagare.acreedorAcepta
+        'valor': pagare.valor,
+        'nombreDeudor': pagare.nombreDeudor,
+        'idDeudor': pagare.idDeudor,
+        'nombreAcreedor': pagare.nombreAcreedor,
+        'idAcreedor': pagare.idAcreedor,
+        'fechaCreacion': pagare.fechaCreacion,
+        'lugarCreacion': pagare.lugarCreacion,
+        'fechaVencimiento': pagare.fechaVencimiento,
+        'fechaExpiracion': pagare.fechaExpiracion,
+        'lugarCumplimiento': pagare.lugarCumplimiento,
+        'firma': pagare.firma,
+        'ultimoEndoso': pagare.ultimoEndoso,
+        'pendiente': pagare.pendiente,
+        'etapa': pagare.etapa,
+        'terminos': pagare.terminos,
+        'codigoRetiro': pagare.codigoRetiro,
+        'confirmacionRetiro': pagare.confirmacionRetiro,
+        'hash_transaccion': pagare.hash_transaccion,
+        'deudorAcepta': pagare.deudorAcepta,
+        'acreedorAcepta': pagare.acreedorAcepta
 
     }
 
 
 # --------Helper Methods------------
-
-
 
