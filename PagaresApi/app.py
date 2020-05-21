@@ -248,7 +248,7 @@ def getPagaresAcreedor(id_acreedor):
             returnList.append(vars(pagare))
     
     endosos = db.endosos.find({"id_endosatario": int(id_acreedor), "es_ultimo_endoso": True})
-    print(list(endosos))
+    # print(list(endosos))
     for e in list(endosos):
         pagare = Pagare()
         doc = db.pagares.find_one({"_id": ObjectId(e['id_pagare'])})
@@ -474,18 +474,22 @@ def crear_endoso_etapa_2(id_pagare):
     endoso = Endoso()
     docEndoso = db.endosos.find_one({"id_pagare": id_pagare})
     if docEndoso == None:
+        print("No existe un endoso pendiente (en etapa 2) para el pagare designado")
         return "No existe un endoso pendiente (en etapa 2) para el pagare designado", 401
     endoso.endosoFromDoc(docEndoso)
     # Revisar que el endoso sea valido
     if not pagare.pendiente:
+        print("Error: El pagare {} no está pendiente, puede ser que está vencido o algo".format(pagare._id))
         return "Error: El pagare {} no está pendiente, puede ser que está vencido o algo".format(pagare._id)
     if pagare.ultimoEndoso == "null" and endoso.id_endosante != pagare.idAcreedor:
+        print("Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare))
         return "Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare), 401
     if pagare.ultimoEndoso != "null":
         ultimoEndoso = Endoso()
         ultimoEndoso.endosoFromDoc(db.endosos.find_one(
             {"_id": ObjectId(pagare.ultimoEndoso)}))
         if ultimoEndoso.id_endosatario != endoso.id_endosante:
+            print("Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare))
             return "Error: {} no es el acreedor actual del pagare {}".format(endoso.nombre_endosante, id_pagare), 401
     # agregar codigo de retiro
     endoso.codigo_retiro = request.json['codigo_retiro']
