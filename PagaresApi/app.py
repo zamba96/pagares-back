@@ -11,6 +11,7 @@ from Pagare import Pagare
 import EndosoEndpoint
 from Endoso import Endoso
 import threading
+from pprint import pprint
 
 dateFormatStr = '%d-%m-%Y'
 
@@ -248,10 +249,13 @@ def getPagaresAcreedor(id_acreedor):
             returnList.append(vars(pagare))
     
     endosos = db.endosos.find({"id_endosatario": int(id_acreedor), "es_ultimo_endoso": True})
+    # pprint(list(endosos))
     # print(list(endosos))
     for e in list(endosos):
         pagare = Pagare()
         doc = db.pagares.find_one({"_id": ObjectId(e['id_pagare'])})
+        pprint(e['id_pagare'])
+        pprint(doc)
         pagare.pagareFromDoc(doc)
         returnList.append(vars(pagare))
     return jsonify(returnList)
