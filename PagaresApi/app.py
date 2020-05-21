@@ -472,10 +472,10 @@ def crear_endoso_etapa_2(id_pagare):
     pagare = Pagare()
     pagare.pagareFromDoc(doc)
     endoso = Endoso()
-    docEndoso = db.endosos.find_one({"id_pagare": id_pagare})
+    docEndoso = db.endosos.find_one({"id_pagare": id_pagare, "etapa": 1})
     if docEndoso == None:
-        print("No existe un endoso pendiente (en etapa 2) para el pagare designado")
-        return "No existe un endoso pendiente (en etapa 2) para el pagare designado", 401
+        print("No existe un endoso pendiente (en etapa 1) para el pagare designado")
+        return "No existe un endoso pendiente (en etapa 1) para el pagare designado", 401
     endoso.endosoFromDoc(docEndoso)
     # Revisar que el endoso sea valido
     if not pagare.pendiente:
@@ -517,9 +517,9 @@ def crear_endoso_etapa_3(id_pagare):
     pagare.pagareFromDoc(doc)
     anterior_endoso = pagare.ultimoEndoso
     endoso = Endoso()
-    docEndoso = db.endosos.find_one({"id_pagare": id_pagare})
+    docEndoso = db.endosos.find_one({"id_pagare": id_pagare, "etapa": 2})
     if docEndoso == None:
-        return "No existe un endoso pendiente (en etapa 3) para el pagare designado", 401
+        return "No existe un endoso pendiente (en etapa 2) para el pagare designado", 401
     endoso.endosoFromDoc(docEndoso)
     # Revisar que el endoso sea valido
     if not pagare.pendiente:
