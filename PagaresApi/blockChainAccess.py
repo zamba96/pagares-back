@@ -11,13 +11,19 @@ from eth_account import Account
 
 
 class BlockChainAccess:
+    # URL A nuestro infura api endpoint
     infura_url = 'https://ropsten.infura.io/v3/eb2fd22ee53744e7aa5c7f43b00536ba'
+
     ganache_url = "http://127.0.0.1:7545"
+    # Cuenta nuestra de ropsten
     account_1 = '0xCE7f6e712F227bAc123fD5939047Db2963E10d7F'  # Ropsten
-    infura_wss = 'wss://ropsten.infura.io/ws/v3/eb2fd22ee53744e7aa5c7f43b00536ba'
+    # infura_wss = 'wss://ropsten.infura.io/ws/v3/eb2fd22ee53744e7aa5c7f43b00536ba'
     # account_1 = '0xE5cfc1B30018147c83E599d5D6Aa79b9fc26CF4a'  # Ganache
 
+    # PK de ropsten
     pk = '37196d25e9c8ce0ab7e3ebfed765aa58cf5ff77f3499e790b60f342dcd0212ab'  # Ropsten
+
+    
     # pk = '96f6e38c9334fab49ce3a08b8b2f74feb83259bbdd70c294698b104d516414ef'  # Ganache
     # account_2 = '0xdfeBbE784E15999C807e00125d7f10dc96A4Bc0b' # Fill me in
     # pk_1 = '3c554492f98ca1c8974a4f74db7fc78bae58ad8588a45cab3d330ed2aa7ea25c' # PK 1
@@ -45,9 +51,11 @@ class BlockChainAccess:
             print("-------------------Blockchain Access--------------------------")
             print('Connection to {}: established'.format(self.web3.provider))
             print("--------------------------------------------------------------")
-            with open('../truffle stuff/build/contracts/PagareTracker.json') as json_file:
-                abi = json.load(json_file)['abi']
+        
+        with open('../truffle stuff/build/contracts/PagareTracker.json') as json_file:
+            abi = json.load(json_file)['abi']
 
+        # Contrato principal
         self.contractAddress = self.web3.toChecksumAddress(
             '0x9D7F19128E83DcBa77271FEE9d72BD70C9fa2048')
 
@@ -60,11 +68,13 @@ class BlockChainAccess:
         with open('registry.json') as json_file:
             abi_registry = json.load(json_file)
 
+        # Contrato ENS resolver
         self.resolverAddress = self.web3.toChecksumAddress(
             '0x42D63ae25990889E35F215bC95884039Ba354115')
         self.resolverContract = self.web3.eth.contract(
             address=self.resolverAddress, abi=abi_resolver)
-
+        
+        # Contrato ENS Register
         self.registerAddress = self.web3.toChecksumAddress(
             '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e')
         self.registryContract = self.web3.eth.contract(
