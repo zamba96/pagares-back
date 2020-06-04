@@ -97,6 +97,13 @@ class BlockChainAccess:
         }
         return return_dict
 
+    def awaitTransaction(self, tx):
+        tx_receipt = self.web3.eth.waitForTransactionReceipt(tx, timeout=700)
+        return tx_receipt
+    
+    def getNonce(self):
+        return self.web3.eth.getTransactionCount(self.account_1)
+
     def crear_pagare(self, pagare: Pagare):
         info = str(pagare.fechaCreacion) + ','
         info = info + str(pagare.fechaVencimiento) + ','
@@ -116,7 +123,29 @@ class BlockChainAccess:
         tx_hash = self.web3.eth.sendRawTransaction(signed_tx.rawTransaction)
         # tx_hash = self.contract.functions.createPagare(pagare._id, str(pagare.valor), info_deudor, info_acreedor, info).transact({'from': self.account_1})
         tx_hash_string = "0x" + str(binascii.hexlify(tx_hash)).split("'")[1]
-        return tx_hash_string
+        return tx_hash_string, tx_hash
+        # return "nope"
+    
+    def crear_pagareNonce(self, pagare: Pagare, nonce: int):
+        info = str(pagare.fechaCreacion) + ','
+        info = info + str(pagare.fechaVencimiento) + ','
+        info = info + str(pagare.fechaExpiracion) + ','
+        info = info + pagare.lugarCreacion + ','
+        info = info + pagare.lugarCumplimiento + ','
+        info = info + pagare.firma
+        info_acreedor = str(pagare.idAcreedor) + ',' + pagare.nombreAcreedor
+        info_deudor = str(pagare.idDeudor) + ',' + pagare.nombreDeudor
+        # nonce = self.web3.eth.getTransactionCount(self.account_1)
+        tx = self.contract.functions.createPagare(pagare._id, str(pagare.valor), info_deudor, info_acreedor, info).buildTransaction({
+            'nonce': nonce,
+        })
+        signed_tx = self.web3.eth.account.sign_transaction(
+            tx, private_key=self.pk)
+        # print(signed_tx.hash)
+        tx_hash = self.web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        # tx_hash = self.contract.functions.createPagare(pagare._id, str(pagare.valor), info_deudor, info_acreedor, info).transact({'from': self.account_1})
+        tx_hash_string = "0x" + str(binascii.hexlify(tx_hash)).split("'")[1]
+        return tx_hash_string, tx_hash
         # return "nope"
 
     def get_pure_pagare(self, id_pagare):
@@ -254,8 +283,8 @@ class BlockChainAccess:
 if __name__ == '__main__':
     bca = BlockChainAccess()
     # pprint(bca.get_all_transactions())
-    newOwner = '0xfabc9d025e7B0F7720300c1F99a57fd6e4413934'  # testaccount 3
-    otroOwner = '0x025dc30A373111F8b602389360C11645df83c6c2'
-    bca.create_subbomain('prueba5', otroOwner)
-    print(bca.get_owner_domain('prueba5.pagaresvirtuales.test'))
-    print(bca.get_address_from_name('prueba5.pagaresvirtuales.test'))
+    # newOwner = '0xfabc9d025e7B0F7720300c1F99a57fd6e4413934'  # testaccount 3
+    # otroOwner = '0x025dc30A373111F8b602389360C11645df83c6c2'
+    # bca.create_subbomain('prueba5', otroOwner)
+    # print(bca.get_owner_domain('prueba5.pagaresvirtuales.test'))
+    # print(bca.get_address_from_name('prueba5.pagaresvirtuales.test'))

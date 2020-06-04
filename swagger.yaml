@@ -1,0 +1,535 @@
+swagger: "2.0"
+info:
+  description: "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters."
+  version: "1.0.0"
+  title: "Swagger Petstore"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "petstore.swagger.io"
+basePath: "/v2"
+tags:
+- name: "pagares"
+  description: "Todo lo de pagares"
+- name: "endosos"
+  description: "Endosos"
+- name: "ENS"
+  description: "Todo lo que tiene que ver con Ethereum Name Service"
+schemes:
+- "https"
+- "http"
+paths:
+  /pagares:
+    get:
+      tags:
+      - "pagares"
+      summary: "Obtiene todos los pagares del sistema"
+      description: ""
+      operationId: "getPagares"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+  /pagares/{id_pagare}:
+    get:
+      tags:
+      - "pagares"
+      summary: "El pagare con el id dado"
+      description: ""
+      operationId: "getPagare"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+  /pagares/{id_pagare}/blockchain:   
+    get:
+      tags:
+      - "pagares"
+      summary: "obtiene la representacion en el blockchain del pagare con el id dado"
+      description: ""
+      operationId: "getPagareBlockchain"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+  /pagares/acreedor/{id_acreedor}:   
+    get:
+      tags:
+      - "pagares"
+      summary: "obtiene los pagares donde el acreedor es el del id dado"
+      description: ""
+      operationId: "getPagaresAcreedor"
+      parameters:
+      - name: "id_acreedor"
+        in: "path"
+        description: "ID del acreedor"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+  /pagares/deudor/{id_deudor}:   
+    get:
+      tags:
+      - "pagares"
+      summary: "obtiene los pagares donde el deudor es el del id dado"
+      description: ""
+      operationId: "getPagaresDeudor"
+      parameters:
+      - name: "id_deudor"
+        in: "path"
+        description: "ID del deudor"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+  /pagares/etapa1:
+    post:
+      tags:
+      - "pagares"
+      summary: "Crea un nuevo pagare en etapa 1"
+      description: ""
+      operationId: "createPagare"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+  /pagares/{id_pagare}/etapa2:
+    post:
+      tags:
+      - "pagares"
+      summary: "Lleva el pagare con el id dado a etapa 2"
+      description: ""
+      operationId: "updatePagareEtapa2"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"  
+        "400":
+            description: "El id es invalido"
+        "404":
+            description: "No existe el pagare con ese id"
+  /pagares/{id_pagare}/etapa2/aceptar:
+    post:
+      tags:
+      - "pagares"
+      summary: "Acepta las condiciones del pagare en etapa 2"
+      description: ""
+      operationId: "updatePagareEtapa2Aceptar"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"  
+        "400":
+            description: "El id es invalido"
+        "404":
+            description: "No existe el pagare con ese id"
+  /pagares/{id_pagare}/etapa3:
+    post:
+      tags:
+      - "pagares"
+      summary: "Lleva el pagare con el id dado a etapa 3"
+      description: ""
+      operationId: "updatePagareEtapa3"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+        "400":
+          description: "El id es invalido"
+        "404":
+          description: "No existe el pagare con ese id"
+  /pagares/{id_pagare}/etapa4:
+    post:
+      tags:
+      - "pagares"
+      summary: "Lleva el pagare con el id dado a etapa 4 y lo incluye en el blockchain"
+      description: ""
+      operationId: "updatePagareEtapa4"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+        "400":
+          description: "El id es invalido"
+        "404":
+          description: "No existe el pagare con ese id"
+  
+  /endosos/endosante/{id_endosante}:
+    get:
+      tags:
+      - "endosos"
+      summary: "Encuentra todos los endosos donde el endosante es el del id dado"
+      description: ""
+      operationId: "getEndososEndosante"
+      parameters:
+      - name: "id_endosante"
+        in: "path"
+        description: "ID del endosante"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+  /endosos/endosatario/{id_endosatario}:
+    get:
+      tags:
+      - "endosos"
+      summary: "Encuentra todos los endosos donde el endosatario es el del id dado"
+      description: ""
+      operationId: "getEndososEndosatario"
+      parameters:
+      - name: "id_endosatario"
+        in: "path"
+        description: "ID del endosatario"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"      
+  /endosos/{id_endoso}/blockchain:
+    get:
+      tags:
+      - "endosos"
+      summary: "Encuentra la representacion del blockchain del endoso con el id dado"
+      description: ""
+      operationId: "getEndosoBlockchain"
+      parameters:
+      - name: "id_endoso"
+        in: "path"
+        description: "ID del endoso"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"    
+        "404":
+          description: "No existe el endoso en el blockchain :("
+  /endosos/{id_endoso}:
+    get:
+      tags:
+      - "endosos"
+      summary: "Encuentra el endoso con el id dado"
+      description: ""
+      operationId: "getEndoso"
+      parameters:
+      - name: "id_endoso"
+        in: "path"
+        description: "ID del endoso"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"    
+        "404":
+          description: "No existe el endoso :("
+        "400":
+          description: "El id es invalido"
+  /pagares/{id_pagare}/endosos:
+    get:
+      tags:
+      - "endosos"
+      summary: "Encuentra los endosos del pagare con id dado"
+      description: ""
+      operationId: "getEndososPagare"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"    
+        "404":
+          description: "No existe el pagare :("
+        "400":
+          description: "El id es invalido"
+  /pagares/{id_pagare}/ultimo_endoso:
+    get:
+      tags:
+      - "endosos"
+      summary: "Encuentra el ultimo endoso del pagare con id dado"
+      description: ""
+      operationId: "getUltimoEndosoPagare"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"    
+        "404":
+          description: "No existe el pagare :("
+        "400":
+          description: "El id es invalido"
+  /endosos:
+    get:
+      tags:
+      - "endosos"
+      summary: "Encuentra el ultimo endoso del pagare con id dado"
+      description: ""
+      operationId: "getEndosos"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"      
+  /pagares/{id_pagare}/endosos/etapa1:
+    post:
+      tags:
+      - "endosos"
+      summary: "Crea un nuevo endoso en etapa 1 del pagare con id dado"
+      description: ""
+      operationId: "createEndoso"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+        "404":
+          description: "No existe el pagare :("
+        "400":
+          description: "El id es invalido"
+        "401":
+          description: "Ya existe un endoso en proceso para el pagare dado"
+  /pagares/{id_pagare}/endosos/etapa2:
+    post:
+      tags:
+      - "endosos"
+      summary: "Actualiza un endoso de etapa 1 a 2"
+      description: ""
+      operationId: "updateEndosoEtapa2"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+        "404":
+          description: "No existe el pagare :("
+        "400":
+          description: "El id es invalido"
+        "401":
+          description: "Ya existe un endoso en proceso para el pagare dado"
+  /pagares/{id_pagare}/endosos/etapa3:
+    post:
+      tags:
+      - "endosos"
+      summary: "Actualiza un endoso de etapa 2 a 3 y lo agrega al blockchain"
+      description: ""
+      operationId: "updateEndosoEtapa3"
+      parameters:
+      - name: "id_pagare"
+        in: "path"
+        description: "ID del pagare"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+        "404":
+          description: "No existe el pagare :("
+        "400":
+          description: "El id es invalido"
+        "401":
+          description: "Ya existe un endoso en proceso para el pagare dado"
+  /ens:
+    post:
+      tags:
+      - "ENS"
+      summary: "Crea un nuevo subdominio para pagaresvirtuales.test"
+      description: ""
+      operationId: "createSubDomain"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+  /ens/{domain}:
+    post:
+      tags:
+      - "ENS"
+      summary: "Retorna el address asociado al subdomain de entrada"
+      description: ""
+      operationId: "getAddressFromName"
+      parameters:
+      - name: "domain"
+        in: "path"
+        description: "dominio a buscar"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+        "404":
+          description: "No existe el subdominio"
+  /ens/{domain}/owner:
+    post:
+      tags:
+      - "ENS"
+      summary: "Retorna el dueno asociado al subdomain de entrada"
+      description: ""
+      operationId: "getOwnerFromName"
+      parameters:
+      - name: "domain"
+        in: "path"
+        description: "dominio a buscar"
+        required: true
+        type: "string"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Exito"
+        "404":
+          description: "No existe el subdominio"
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+  
