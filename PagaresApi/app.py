@@ -201,8 +201,8 @@ def crear_pagare_4(id_pagare):
     pagare.pendiente = True
     pagare.fechaCreacion = fecha_hoy
     pagare.fechaExpiracion = fecha_expr
-    hash_transaccion = bca.crear_pagare(pagare)
-    pagare.hash_transaccion = hash_transaccion
+    # hash_transaccion = bca.crear_pagare(pagare)
+    pagare.hash_transaccion = pagare.firma
     updates = getUpdateStatement(pagare)
 
     db.pagares.update_one({'_id': ObjectId(id_pagare)}, {'$set': updates})
